@@ -1,54 +1,33 @@
-import json
+phone_book: list[dict[str, str]] = []
+path = 'D:/Kate/EDU/GeekBrains/lessons/practice/python_course/seminars/sem9/hw9/phone.txt' # copy path (ПКМ на текстовый файл -> Copy path file
 
-data = {}
+def open_pb():
+		global phone_book, path
+		with open(path, 'r', encoding='UTF-8') as file:
+				data = file.readlines() # 'Kate:7444654:comment'
+		for contact in data: # for i 
+				contact = contact.strip().split(':') # .strip() - очищение начало и конец строки
+				phone_book.append({'name':contact[0], 'phone':contact[1], 'comment':contact[2]})
 
-def addContact(data):
-    contact_id = max(data.keys()) + 1 if len(data) > 0 else 1
-    name = input('Введите ФИО: ')
-    phone = input('Введите номер телефона: ')
-    data[contact_id] = {'name': name, 'phone': phone} 
+def save_pb():
+		global phone_book, path
+		data = []
+		for contact in phone_book:
+				contact = ':'.join([value for value in contact.values()])
+				data.append(contact)
+		with open(path, 'w', encoding='UTF-8') as file:
+				file.write('\n'.join(data))
 
-def saveContact(data):
-    with open("data_file.json", "w", encoding='utf-8') as write_file:
-        write_file.write(json.dumps(data)) # сбрасывает данные в файл
+def get_pb() -> list[dict[str, str]]:
+		global phone_book
+		return phone_book
 
-def readContact(data):
-    with open("data_file.json", "r", encoding='utf-8') as read_file:
-        temp = json.loads(read_file.read())
-    for key, value in temp.items():
-        data[int(key)] = value
-    return data
+def add_contact(contact: dict[str, str]):
+		global phone_book
+		phone_book.append(contact)
+		return contact.get('name')
 
-def changeContact(data):
-    print(data)
-    x = int(input('Какой id контакта поменять? '))
-    print(data[x])
-    name = input('Введите имя: ')
-    phone = input('Введите номер телефона: ')
-    if len(name) > 0:
-        data[x]['name'] = name
-    if len(phone) > 0:
-        data[x]['phone'] = phone
+def del_contact(index: int): 
+		return phone_book.pop(index-1).get('name') 
 
-def findContact(data):
-    command = int(input('Меню: \n1. Искать по id \n2. Искать по имени \n3. Искать по телефону \n:'))
-    match command:
-        case 1: 
-            print(data[int(input('Введите id: '))])
-        case 2:
-            fn = input('Введите имя: ').lower()
-            for key, values in data.items():
-                if values['name'].lower().find(fn) != -1:
-                    print(key, values)
-        case 3:
-            fn = input('Введите номер телефона: ')
-            for key, values in data.items():
-                if values['phone'].find(fn) != -1:
-                    print(key, values)            
-                    
-#def deleteContact():
-    
-
-def menuContacts(menu):
-    for key, item in menu.items():
-        print(key, item)
+# def change_pb(index: int, name: str, phone: str):
